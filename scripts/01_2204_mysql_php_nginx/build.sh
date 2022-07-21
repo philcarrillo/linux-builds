@@ -24,7 +24,7 @@ EOF
 
 
 
-while getopts cd:hj:no:r:vt: ; do
+while getopts cd:hj:no:r:vt: x ; do
   case $x in
     c)  client=1;;
     d)  database=$OPTARG;;
@@ -42,7 +42,7 @@ while getopts cd:hj:no:r:vt: ; do
 done
 shift $((OPTIND-1))
 
-if [[ $appliance = 1 ]]; then
+if [[ $version = 1 ]]; then
   # Get O/S info
   cat /etc/os-release
 fi
