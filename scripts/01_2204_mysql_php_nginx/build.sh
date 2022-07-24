@@ -46,3 +46,37 @@ if [[ $version = 1 ]]; then
   # Get O/S info
   cat /etc/os-release
 fi
+
+# nginx
+# check if nginx is in /etc/apt/sources.list
+numrecs=`grep nginx /etc/apt/sources.list | wc -l`
+if [[ $numrecs < 1 ]]; then
+  # Need to install nginx
+  echo "... installing nginx"
+
+  key="ABF5BD827BD9BF62"
+
+  echo >> /etc/apt/sources.list
+  echo "# -- nginx ---">> /etc/apt/sources.list
+  echo "deb https://nginx.org/packages/ubuntu/ jammy nginx" >> /etc/apt/sources.list
+  echo "deb-src https://nginx.org/packages/ubuntu/ jammy nginx" >> /etc/apt/sources.list
+
+  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys $key
+  apt update
+  apt install -y nginx
+
+  systemctl start nginx
+fi
+
+# Create groups, if necessary
+numrecs=`cut -f 1 -d ':' /etc/group | grep www-data | wc -l`
+if [[ $numrecs < 1 ]]; then
+  addgroup www-data
+fi
+
+# Make sure the /var/www directory exists
+if [[ ! -d /var/www ]]; then
+  echo "creating /var/www directory"
+  cd /var
+  mkdir www
+fi
